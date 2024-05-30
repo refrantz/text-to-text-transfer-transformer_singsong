@@ -499,13 +499,13 @@ def load_data(split, shuffle_files=False, seed=10):
     
     def generator():
         # Optionally shuffle input files
-        input_files = tf.io.gfile.listdir(os.path.join(base_dir, "double_bass_input", split))
+        input_files = tf.io.gfile.listdir(os.path.join(base_dir, "drums_input_smt", split))
         if shuffle_files:
             random.shuffle(input_files)
         
         for file_name in input_files:
-            input_path = os.path.join(base_dir, "double_bass_input", split, file_name)
-            output_path = os.path.join(base_dir, "double_bass_output", split, file_name)
+            input_path = os.path.join(base_dir, "drums_input_smt", split, file_name)
+            output_path = os.path.join(base_dir, "drums_output", split, file_name)
             
             with tf.io.gfile.GFile(input_path, "r") as input_file, \
                  tf.io.gfile.GFile(output_path, "r") as output_file:
