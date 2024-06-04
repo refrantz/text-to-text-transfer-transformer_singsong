@@ -535,5 +535,6 @@ seqio.TaskRegistry.add(
     output_features={
         "inputs": seqio.Feature(vocabulary=seqio.PassThroughVocabulary(vocab_size), add_eos=True, dtype=tf.int32),
         "targets": seqio.Feature(vocabulary=seqio.PassThroughVocabulary(vocab_size), add_eos=True, dtype=tf.int32)
-    }
+    },
+    metrics=[metrics.fad_metric]
 )

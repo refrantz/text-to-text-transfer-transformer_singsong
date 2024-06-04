@@ -776,3 +776,54 @@ class ShardedSquad(seqio.metrics.Metric):
 
   def compute(self):
     return {"f1": self.f1, "em": self.em}
+
+from scipy.linalg import sqrtm
+
+class FAD:
+    def __init__(self):
+        # Initialize any necessary components for the FAD calculation
+        pass
+
+    def calculate_frechet_distance(self, mu1, sigma1, mu2, sigma2):
+        # Calculation of the Frechet Distance
+        ssdiff = np.sum((mu1 - mu2) ** 2.0)
+        covmean = sqrtm(sigma1.dot(sigma2))
+        if np.iscomplexobj(covmean):
+            covmean = covmean.real
+        fad = ssdiff + np.trace(sigma1 + sigma2 - 2.0 * covmean)
+        return fad
+
+    def calculate_embd_statistics(self, embeddings):
+        """
+        Calculate the mean and covariance matrix of the embeddings.
+
+        Args:
+            embeddings (numpy.ndarray): The embeddings matrix where each row represents an embedding.
+
+        Returns:
+            tuple: A tuple containing the mean (mu) and covariance (sigma) of the embeddings.
+        """
+        mu = np.mean(embeddings, axis=0)
+        sigma = np.cov(embeddings, rowvar=False)
+        return mu, sigma
+
+    def evaluate(self, embeddings1, embeddings2):
+        # This method accepts two sets of embeddings and calculates the FAD
+        mu1, sigma1 = self.calculate_embd_statistics(embeddings1)
+        mu2, sigma2 = self.calculate_embd_statistics(embeddings2)
+        return self.calculate_frechet_distance(mu1, sigma1, mu2, sigma2)
+
+def fad_metric(targets, predictions):
+    """
+    Calculate the Frechet Audio Distance between the target and prediction embeddings.
+
+    Args:
+        targets (numpy.ndarray): The target embeddings.
+        predictions (numpy.ndarray): The predicted embeddings.
+
+    Returns:
+        dict: Dictionary containing the FAD score.
+    """
+    fad_instance = FAD()
+    fad_score = fad_instance.evaluate(targets, predictions)
+    return {'Frechet_Audio_Distance': fad_score}
