@@ -500,8 +500,9 @@ def load_data(split, shuffle_files=False, seed=10):
     def generator():
         # Optionally shuffle input files
         input_files = tf.io.gfile.listdir(os.path.join(base_dir, "drums_input_toGuit", split))
-        if shuffle_files:
-            random.shuffle(input_files)
+        input_files = sorted(input_files)
+        #if shuffle_files:
+        #    random.shuffle(input_files)
         
         for file_name in input_files:
             input_path = os.path.join(base_dir, "drums_input_toGuit", split, file_name)
